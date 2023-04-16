@@ -4,7 +4,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,10 +38,10 @@ public class TodoResource {
     @Produces(MediaType.TEXT_PLAIN)
     public Response deleteTodo(@PathParam("todo") String todo) {
         System.out.printf(todo);
-        boolean isRemoved =  todoList.remove(todo);
-        if(isRemoved) {
+        boolean isRemoved = todoList.remove(todo);
+        if (isRemoved) {
             return Response.ok(todoList).build();
-        }else {
+        } else {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
     }
