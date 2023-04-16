@@ -1,5 +1,6 @@
 package com.crossaisles;
 
+import org.eclipse.microprofile.faulttolerance.Fallback;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import javax.inject.Inject;
@@ -15,9 +16,15 @@ public class RemoteUserResource {
     @RestClient
     RemoteUserProxy remoteUserProxy;
     @GET
+    @Fallback(fallbackMethod = "getRemoteUsersFallback")
+
     public Response getRemoteUsers() {
         List<RemoteUser> remoteUsers = remoteUserProxy.getRemoteUsers();
         return Response.ok(remoteUsers).build();
+    }
+
+    public Response getRemoteUsersFallback() {
+        return Response.ok("We our upgrading our systems current to serve you better").build();
     }
 
     @GET
