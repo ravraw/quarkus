@@ -1,5 +1,6 @@
 package com.crossaisles;
 
+import org.eclipse.microprofile.faulttolerance.CircuitBreaker;
 import org.eclipse.microprofile.faulttolerance.Fallback;
 import org.eclipse.microprofile.faulttolerance.Retry;
 import org.eclipse.microprofile.faulttolerance.Timeout;
@@ -23,6 +24,7 @@ public class RemoteUserResource {
     @GET
     @Retry(maxRetries = 4)
     @Timeout(1000)
+    @CircuitBreaker(requestVolumeThreshold=4, failureRatio=.5, delay=10000)
     @Fallback(fallbackMethod = "getRemoteUsersFallback")
     public Response getRemoteUsers() throws InterruptedException {
         Long startTime = System.currentTimeMillis();
