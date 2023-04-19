@@ -7,7 +7,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import java.util.List;
 @Path("/")
-@RegisterRestClient(baseUri = "https://jsonplaceholder.typicode.co")
+@RegisterRestClient(baseUri = "https://jsonplaceholder.typicode.com")
 public interface RemoteUserProxy {
     @GET
     @Path("users")
