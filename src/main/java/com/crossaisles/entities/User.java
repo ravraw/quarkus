@@ -10,7 +10,7 @@ import javax.persistence.Id;
 
 @Entity
 public class User extends PanacheEntity {
-//    @GeneratedValue(strategy = GenerationType.AUTO)
+//  @GeneratedValue(strategy = GenerationType.AUTO)
     private String name;
     private String username;
     private String email;
