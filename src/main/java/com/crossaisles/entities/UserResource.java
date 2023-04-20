@@ -35,7 +35,7 @@ public class UserResource {
     public Response saveUser(User user) {
         User.persist(user);
         if (user.isPersistent()) {
-            return Response.ok(URI.create(String.format("http://localhost:8080/entity/users/%s", user.id))).build();
+            return Response.ok(URI.create(String.format("http://localhost:8080/entity/users/%s",user.id))).build();
         } else {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
@@ -46,7 +46,6 @@ public class UserResource {
     @Path("/users/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-
     public Response updateUser(@PathParam("id") Long id, User updateUser) {
         Optional<User> userFound = User.findByIdOptional(id);
         if (userFound.isPresent()) {
