@@ -1,21 +1,24 @@
 package com.crossaisles.entities;
 
+import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.net.URI;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 @Path("/entity")
 public class UserResource {
+    @Inject
+    UserRepository userRepository;
+
     @GET
     @Path("/users")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUsers() {
-        List<User> users = User.listAll();
+        List<User> users = userRepository.listAll();
         return Response.ok(users).build();
     }
 
@@ -23,7 +26,7 @@ public class UserResource {
     @Path("/users/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getById(@PathParam("id") Long id) {
-        User user = User.findById(id);
+        User user = userRepository.findById(id);
         return Response.ok(user).build();
     }
 
@@ -33,10 +36,10 @@ public class UserResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response saveUser(User user) {
-        User.persist(user);
-        if (user.isPersistent()) {
-            return Response.ok(URI.create(String.format("http://localhost:8080/entity/users/%s",user.id))).build();
-        } else {
+        try {
+            userRepository.persist(user);
+            return Response.ok().build();
+        } catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
     }
@@ -47,15 +50,16 @@ public class UserResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateUser(@PathParam("id") Long id, User updateUser) {
-        Optional<User> userFound = User.findByIdOptional(id);
+        Optional<User> userFound = userRepository.findByIdOptional(id);
         if (userFound.isPresent()) {
             if (Objects.nonNull(updateUser.getName())) {
                 userFound.get().setName(updateUser.getName());
             }
-            userFound.get().persist();
-            if (userFound.get().isPersistent()) {
-                return Response.ok(URI.create(String.format("http://localhost:8080/entity/users/%s", id))).build();
-            } else {
+
+            try {
+                userRepository.persist(userFound.get());
+                return Response.ok().build();
+            } catch (Exception e) {
                 return Response.status(Response.Status.BAD_REQUEST).build();
             }
         } else {
@@ -67,7 +71,7 @@ public class UserResource {
     @Transactional
     @Path("/users/{id}")
     public Response deleteUser(@PathParam("id") Long id) {
-        boolean isDeleted = User.deleteById(id);
+        boolean isDeleted = userRepository.deleteById(id);
         if (isDeleted) {
             return Response.noContent().build();
         } else {

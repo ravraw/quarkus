@@ -1,5 +1,6 @@
 package com.crossaisles.entities;
 
+import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -10,10 +11,13 @@ import java.util.Optional;
 
 @Path("/entities/todos")
 public class TodoResource {
+    @Inject
+    TodoRepository todoRepository;
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getTodos() {
-        List<Todo> todos = Todo.listAll();
+        List<Todo> todos = todoRepository.listAll();
         return Response.ok(todos).build();
     }
 
@@ -21,7 +25,7 @@ public class TodoResource {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getById(@PathParam("id") Long id) {
-        Optional<Todo> todo = Todo.findByIdOptional(id);
+        Optional<Todo> todo = todoRepository.findByIdOptional(id);
         if (todo.isPresent()) {
             return Response.ok(todo).build();
         } else {
@@ -34,10 +38,10 @@ public class TodoResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response saveTodo(Todo todo) {
-        Todo.persist(todo);
-        if (todo.isPersistent()) {
+        try {
+            todoRepository.persist(todo);
             return Response.ok(todo).build();
-        } else {
+        } catch (Exception e) {
             return Response.status(Response.Status.CONFLICT).build();
         }
     }
@@ -48,30 +52,25 @@ public class TodoResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateTodo(@PathParam("id") Long id, Todo todo) {
-        Optional<Todo> exsistingTodo = Todo.findByIdOptional(todo);
-        if (exsistingTodo.isPresent()) {
-            if (Objects.nonNull(exsistingTodo.get().getTitle())) {
-                exsistingTodo.get().setTitle(todo.getTitle());
+        Optional<Todo> existingTodo = todoRepository.findByIdOptional(id);
+        if (existingTodo.isPresent()) {
+            if (Objects.nonNull(todo.getTitle())) {
+                existingTodo.get().setTitle(todo.getTitle());
             }
 
-            if (Objects.nonNull(exsistingTodo.get().getBody())) {
-                exsistingTodo.get().setBody(todo.getBody());
+            if (Objects.nonNull(todo.getBody())) {
+                existingTodo.get().setBody(todo.getBody());
             }
-            if (Objects.nonNull(exsistingTodo.get().isCompleted())) {
-                exsistingTodo.get().setCompleted(todo.isCompleted());
-            }
-            exsistingTodo.get().persist();
-            if (exsistingTodo.get().isPersistent()) {
-                return Response.accepted(exsistingTodo).build();
+            existingTodo.get().setCompleted(todo.isCompleted());
 
-            } else {
+            try {
+                todoRepository.persist(existingTodo.get());
+                return Response.accepted(existingTodo).build();
+            } catch (Exception e) {
                 return Response.status(Response.Status.BAD_REQUEST).build();
             }
-
         } else {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
     }
-
-
 }

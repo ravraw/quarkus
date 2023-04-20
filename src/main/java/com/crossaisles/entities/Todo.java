@@ -1,21 +1,24 @@
 package com.crossaisles.entities;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntity;
-import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
-
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 @Entity
-public class Todo extends PanacheEntity {
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.AUTO)
+public class Todo {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
     private String title;
     private String body;
-    private  boolean isCompleted;
+    private boolean isCompleted;
 
-    @ManyToOne
-    User user;
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -33,11 +36,11 @@ public class Todo extends PanacheEntity {
     }
 
     public boolean isCompleted() {
-        return isCompleted;
+        return this.isCompleted;
     }
 
     public void setCompleted(boolean isCompleted) {
-        isCompleted = isCompleted;
+        this.isCompleted = isCompleted;
     }
 
     public User getUser() {
@@ -47,5 +50,8 @@ public class Todo extends PanacheEntity {
     public void setUser(User user) {
         this.user = user;
     }
+
+    @ManyToOne
+    User user;
 
 }
