@@ -33,6 +33,22 @@ public class TodoResource {
         }
     }
 
+    @GET
+    @Path("/{user_id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getByUserId(@PathParam("user_id") Long userId) {
+        List<Todo> todo = todoRepository.list("user_id", userId);
+            return Response.ok(todo).build();
+    }
+
+    @GET
+    @Path("/{isCompleted}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getByStatus(@PathParam("isCompleted") boolean isCompleted) {
+        List<Todo> todo = todoRepository.list("isCompleted", true);
+        return Response.ok(todo).build();
+    }
+
     @POST
     @Transactional
     @Consumes(MediaType.APPLICATION_JSON)
