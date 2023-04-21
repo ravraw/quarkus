@@ -36,12 +36,9 @@ public class UserResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response saveUser(User user) {
-        try {
-            userRepository.persist(user);
-            return Response.ok().build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        }
+        userRepository.persist(user);
+        return userRepository.isPersistent(user) ? Response.ok().build() : Response.status(Response.Status.BAD_REQUEST).build();
+
     }
 
     @PUT
@@ -55,13 +52,9 @@ public class UserResource {
             if (Objects.nonNull(updateUser.getName())) {
                 userFound.get().setName(updateUser.getName());
             }
-
-            try {
-                userRepository.persist(userFound.get());
-                return Response.ok().build();
-            } catch (Exception e) {
-                return Response.status(Response.Status.BAD_REQUEST).build();
-            }
+            return userRepository.isPersistent(userFound.get()) ?
+                    Response.ok().build() :
+                    Response.status(Response.Status.BAD_REQUEST).build();
         } else {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
@@ -71,11 +64,8 @@ public class UserResource {
     @Transactional
     @Path("/users/{id}")
     public Response deleteUser(@PathParam("id") Long id) {
-        boolean isDeleted = userRepository.deleteById(id);
-        if (isDeleted) {
-            return Response.noContent().build();
-        } else {
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        }
+         return userRepository.deleteById(id) ?
+                 Response.noContent().build() :
+                 Response.status(Response.Status.BAD_REQUEST).build();
     }
 }

@@ -1,5 +1,7 @@
 package com.crossaisles.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 
 @Entity
@@ -9,7 +11,18 @@ public class Todo {
     private Long id;
     private String title;
     private String body;
-    private boolean isCompleted;
+    private boolean completed;
+    @JsonBackReference
+    @ManyToOne
+    User user;
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public Long getId() {
         return id;
@@ -31,27 +44,16 @@ public class Todo {
         return body;
     }
 
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
+    }
+
     public void setBody(String body) {
         this.body = body;
     }
-
-    public boolean isCompleted() {
-        return this.isCompleted;
-    }
-
-    public void setCompleted(boolean isCompleted) {
-        this.isCompleted = isCompleted;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    @ManyToOne
-    User user;
 
 }
