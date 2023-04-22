@@ -1,7 +1,6 @@
 package com.crossaisles.student;
 
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
-import org.jboss.resteasy.annotations.Body;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;

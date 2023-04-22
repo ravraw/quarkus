@@ -11,6 +11,8 @@ public class Student {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     private String name;
+    private String branch;
+
     public long getId() {
         return id;
     }
@@ -34,7 +36,5 @@ public class Student {
     public void setBranch(String branch) {
         this.branch = branch;
     }
-
-    private String branch;
 
 }
